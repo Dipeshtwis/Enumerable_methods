@@ -59,7 +59,7 @@ module Enumerable
   def my_map
     items = []
     my_each do |i|
-      proc.nil? ? items << proc.call(i) : items << yield(i)
+      items << (proc.nil? ? proc.call(i) : yield(i))
     end
     items
   end
@@ -75,11 +75,11 @@ end
 arr = [2, 4, 5]
 arr.my_each { |i| p i }
 arr.my_each_with_index { |val, i| p "#{val} in index #{i}" }
-p arr.my_select { |i| }
-p (arr.my_all? { |i| i > 3 })
-p (arr.my_any? { |i| i > 10 })
-p (arr.my_none? { |i| i > 9 })
-p (arr.my_count? { |i| i > 3 })
+p(arr.my_select { |i| })
+p(arr.my_all? { |i| i > 3 })
+p(arr.my_any? { |i| i > 10 })
+p(arr.my_none? { |i| i > 9 })
+p(arr.my_count? { |i| i > 3 })
 p arr.my_inject(0) { |total, i| total + i }
 
 def multiply_els(arr)
@@ -88,6 +88,6 @@ end
 
 p multiply_els(arr)
 
-p (arr.my_map { |i| i + 5 })
+p(arr.my_map { |i| i + 5 })
 my_proc = proc.new { |i| i**3 }
 p arr.my_map(&my_proc)
