@@ -1,6 +1,5 @@
 AllCops:
   Exclude:
-    - "README.md"
     - "Guardfile"
     - "Rakefile"
 
@@ -48,4 +47,7 @@ Style/HashEachMethods:
 Style/HashTransformKeys:
   Enabled: false
 Style/HashTransformValues:
+  Enabled: false
+  
+Style/CaseEquality:
   Enabled: false
