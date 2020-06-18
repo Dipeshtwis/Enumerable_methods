@@ -38,6 +38,35 @@
       true
     end
 
+    def my_any?
+      self.my_each do |i|
+        if yield(i) == true
+          return true
+        	
+        end
+      end
+      false
+    end
+
+    def my_none?
+      self.my_each do |i|
+        if yield(i) == true
+          return false
+        	
+        end
+      end
+      true
+    end
+
+    def my_count?
+      count = 0
+      self.my_each do |i|
+        if yield(i) == true
+          count +=1
+        end
+      end
+      count
+    end
   end
 
   arr = [2, 4, 5]
@@ -45,3 +74,6 @@
   arr.my_each_with_index {|val, i| p "#{val} in index #{i}"}
   p arr.my_select {|i| }
   p arr.my_all? {|i| i > 3}
+  p arr.my_any? {|i| i > 3}
+  p arr.my_none? {|i| i > 9}
+  p arr.my_count? {|i| i > 3}
