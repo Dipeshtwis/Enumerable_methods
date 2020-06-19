@@ -1,6 +1,7 @@
 module Enumerable
   def my_each
     return to_enum if block_given? == false
+
     i = 0
     while i < length
       yield(self[i])
@@ -12,6 +13,7 @@ module Enumerable
 
   def my_each_with_index
     return to_enum if block_given? == false
+
     i = 0
     while i < length
       yield(self[i], i)
@@ -23,6 +25,7 @@ module Enumerable
 
   def my_select
     return to_enum if block_given? == false
+
     selected_item = []
     my_each do |i|
       selected_item.push(i)
@@ -69,6 +72,7 @@ module Enumerable
     end
     false
   end
+
   def my_none?(args = nil)
     index = 0
     array = to_a
@@ -89,17 +93,14 @@ module Enumerable
     end
     true
   end
+
   def my_count(args = '')
     array = to_a
     index = 0
     count = 0
     if block_given? == false
       while index < array.size
-        if args != ''
-          count += 1 if array[index] == args
-        else
-          count += 1
-        end
+        count += 1 if args != '' && array[index] == args
         index += 1
       end
     else
@@ -119,16 +120,15 @@ module Enumerable
     array = []
     while i < ar.size
       array << if block_given?
-        yield(ar[i])
-          else
-          proc.call(ar[i])
-        end
+                 yield(ar[i])
+               else
+                 proc.call(ar[i])
+               end
       i += 1
     end
     array
   end
 
-  
   def my_inject(*args)
     i = 0
     ar = to_a
@@ -151,7 +151,6 @@ module Enumerable
                         end
       i += 1
     end
-
     injector_result
   end
 end
