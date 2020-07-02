@@ -46,7 +46,7 @@ it 'returns a new hash for which the block returns true' do
 end
 end
 
-describe '#my_all' do
+describe '#my_all?' do
   it 'should return true if no block given' do
     expect([].my_all?).to eql(true)
   end
@@ -65,6 +65,43 @@ describe '#my_all' do
 
   it 'return false if the value is not equal to pattern' do
     expect([3i, 4, 3].my_all?(Numeric)).to eql(true)
+  end
+end
+
+describe '#my_any?' do
+  it 'should return true if the block provided is a value other than nil or false' do
+    expect([1, false, nil].my_any?(Integer)).to eql(true)
+  end
+
+  it 'return false if the block did not return true' do
+    expect(["word", "server", "three"].my_any?(/float/)).to eql(false)
+  end
+
+  it 'should return false unless the value is the same as pattern' do
+    expect([1, false, nil].my_any?).to eql(true)
+  end
+
+  it 'should return true unless value matches the pattern' do
+    expect([1, 2, 3].my_any? {|x| x > 2}).to eql(true)
+  end
+
+end
+
+describe '#my_none?' do
+  it 'return true if the block never return true for all the element provided' do
+    expect(["word", "server", "three"].my_none?{ |x| x.length < 3}).to eql(true)
+  end
+
+  it 'should return true if the block is not passed' do
+    expect([].my_none?).to eql(true)
+  end
+
+  it 'should return false if some of the value return true for the pattern' do
+    expect(["word", "server", "three"].my_none?(/word/)).to eql(false)
+  end
+
+  it 'should compare if the pattern is exactly equal to the given collection of an element and return false' do
+    expect([true, false, nil].my_none?).to eql(false)
   end
 end
 end
