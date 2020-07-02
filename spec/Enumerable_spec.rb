@@ -35,13 +35,13 @@ end
 
 it 'should return new array with selected values' do
 	a = [1, 2, 3, 4, 5]
-	b = a.my_select(&:even?)
+	b = a.my_select(&:odd?)
 	expect(b).not_to eql(a)
 end
 
 it 'returns a new hash for which the block returns true' do
-	options = { font_size: 10, font_family: 'Arial' }
-	c = options[:font_size]
+	options = { likes: 10, post: 'NIce post' }
+	c = options[:likes]
 	expect(c).to eql(10)
 end
 end
