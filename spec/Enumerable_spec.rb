@@ -104,4 +104,31 @@ describe '#my_none?' do
     expect([true, false, nil].my_none?).to eql(false)
   end
 end
+describe '#my_count' do
+it 'returns number of element which matches the pattern' do
+	arr = [1,2,3,4]
+	expect(arr.my_count{|x| x > 2}).to eql(2)
 end
+
+it 'should count the number of items that yields to true value'do
+	arr = [1,2,4,2]
+	expect(arr.my_count(&:even?)).to eql(3)
+end
+it 'returns zero if no argument is given'do
+	expect([].my_count).to eql(0)
+end
+end
+describe '#my_map' do
+	it 'should return new array with the result of current block for every element' do
+		expect((1..4).my_map {|i| i + i}).to match([2,4,6,8])
+	end
+	it 'enumerable when no block is given' do
+		expect((1..4).my_map).to be_instance_of(Enumerator)
+	end
+	
+end
+end
+
+
+
+
