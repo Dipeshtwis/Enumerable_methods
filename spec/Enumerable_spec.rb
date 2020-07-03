@@ -138,8 +138,8 @@ describe Enumerable do
       expect(number.my_inject(0) { |total, x| total + x }).to eql(10)
     end
 
-    it 'return the first element if the second element is nil and there is block' do
-      expect([10, nil].my_inject).to eql(Integer)
+    it 'return the largest element from the string' do
+      expect(string.my_inject { |memo, word| memo.size > word.size ? memo : word }).to eql('bear')
     end
   end
 end
