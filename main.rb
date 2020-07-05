@@ -42,23 +42,27 @@ module Enumerable
   end
 
   def my_all?(args = nil)
-    index = 0
-    array = to_a
-    while index < array.size
-      if block_given? == true
-        return false unless yield(array[index])
-      elsif args.class == Class
-        return false unless array[index].class.ancestors.include? args
-      elsif args.class == Regexp
-        return false unless array[index] =~ args
-      elsif args.nil? == true
-        return false unless array[index]
+    result = true
+    case args
+    when nil
+      if block_given?
+        size.times do |item|
+          result = yield(self[item])
+          return result if result == false
+        end
       else
-        return false unless args[index] == array[index]
+        size.times do |item|
+          result = self[item] != args
+          return result if result == false
+        end
       end
-      index += 1
+    else
+      size.times do |item|
+        result = self[item] == args
+        return result if result == false
+      end
     end
-    true
+    result
   end
 
   def my_any?(args = nil)
@@ -102,22 +106,19 @@ module Enumerable
     true
   end
 
-  def my_count(args = '')
-    array = to_a
-    index = 0
-    count = 0
-    if block_given? == false
-      while index < array.size
-        count += 1 if args != '' && array[index] == args
-        index += 1
-      end
-    else
-      while index < array.size
-        count += 1 if yield(array[index])
-        index += 1
+  def my_count(args = nil)
+    total = 0
+    size.times do |item|
+      case args
+      when nil
+        return size unless block_given?
+
+        total += 1 if yield(self[item])
+      when self[item]
+        total += 1
       end
     end
-    count
+    total
   end
 
   def my_map(&proc)
