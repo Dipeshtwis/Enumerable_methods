@@ -60,19 +60,20 @@ describe Enumerable do
       it 'should return true if no block given' do
         expect([].my_all?).to eql(true)
       end
-    end
 
-    context 'when block is given' do
       it 'should return false if the block never return true' do
         expect([1, true, nil].my_all?).to eql(false)
       end
+    end
 
-      it 'should return false unless the value is the same as pattern' do
-        expect(string.my_all?(/take/)).to eql(false)
-      end
-
+    context 'when block is given' do
       it 'should return false unless value matches the pattern' do
         expect([1, 2, 3].my_all? { |x| x > 2 }).to eql(false)
+      end
+    end
+    context 'when parameter is given' do
+      it 'should return false unless the value is the same as pattern' do
+        expect(string.my_all?(/take/)).to eql(false)
       end
 
       it 'return false if the value is not equal to pattern' do
@@ -86,19 +87,24 @@ describe Enumerable do
   end
 
   describe '#my_any?' do
-    context 'when block given' do
-      it 'should return true if the block provided is a value other than nil or false' do
-        expect([1, false, nil].my_any?(Integer)).to eql(true)
+    context 'when block is not given' do
+      context 'when parameter is not given' do
+        it 'should return false unless the value is the same as pattern' do
+          expect([1, false, nil].my_any?).to eql(true)
+        end
       end
 
-      it 'return false if the block did not return true' do
-        expect(string.my_any?(/float/)).to eql(false)
-      end
+      context 'when parameter is given' do
+        it 'should return true if the block provided is a value other than nil or false' do
+          expect([1, false, nil].my_any?(Integer)).to eql(true)
+        end
 
-      it 'should return false unless the value is the same as pattern' do
-        expect([1, false, nil].my_any?).to eql(true)
+        it 'return false if the block did not return true' do
+          expect(string.my_any?(/float/)).to eql(false)
+        end
       end
-
+    end
+    context 'when block is given' do
       it 'should return true unless value matches the pattern' do
         expect([1, 2, 3].my_any? { |x| x > 2 }).to eql(true)
       end
@@ -106,53 +112,64 @@ describe Enumerable do
   end
 
   describe '#my_none?' do
-    it 'return true if the block never return true for all the element provided' do
-      expect(string.my_none? { |x| x.length < 3 }).to eql(true)
+    context 'when block is not given' do
+      context 'when parameter is not given' do
+        it 'should return true if the block is not passed' do
+          expect([].my_none?).to eql(true)
+        end
+        it 'should compare if the pattern is exactly equal to the given collection of an element and return false' do
+          expect([true, false, nil].my_none?).to eql(false)
+        end
+      end
+      context 'when parameter is given' do
+        it 'should return false if some of the value return true for the pattern' do
+          expect(string.my_none?(/cat/)).to eql(false)
+        end
+      end
     end
-
-    it 'should return true if the block is not passed' do
-      expect([].my_none?).to eql(true)
+    context 'when block is given' do
+      it 'return true if the block never return true for all the element provided' do
+        expect(string.my_none? { |x| x.length < 3 }).to eql(true)
+      end
     end
-
-    it 'should return false if some of the value return true for the pattern' do
-      expect(string.my_none?(/cat/)).to eql(false)
-    end
-
-    it 'should compare if the pattern is exactly equal to the given collection of an element and return false' do
-      expect([true, false, nil].my_none?).to eql(false)
-    end
-
-    # it 'return false ' do
-    #   expect(my_none?(5)).to eql(ws.none?(5))
-    # end
   end
 
   describe '#my_count' do
-    it 'returns number of element which matches the pattern' do
-      expect(number.my_count { |x| x > 2 }).to eql(2)
-    end
+    context 'when block is not given' do
+      context 'when argument is not given' do
+        it 'returns zero if no argument is given' do
+          expect([].my_count).to eql(0)
+        end
 
-    it 'should count the number of items that yields to true value' do
-      arr = [1, 2, 4, 2]
-      expect(arr.my_count(&:even?)).to eql(3)
+        it 'return the number of element present in the array' do
+          expect([1, 2, 4, 2].my_count).to eql(4)
+        end
+      end
+      context 'when argument is given' do
+        it 'should count the number of items that yields to true value' do
+          arr = [1, 2, 4, 2]
+          expect(arr.my_count(&:even?)).to eql(3)
+        end
+      end
     end
-
-    it 'returns zero if no argument is given' do
-      expect([].my_count).to eql(0)
-    end
-
-    it 'return the number of element present in the array' do
-      expect([1, 2, 4, 2].my_count).to eql(4)
+    context 'when block is given' do
+      it 'returns number of element which matches the pattern' do
+        expect(number.my_count { |x| x > 2 }).to eql(2)
+      end
     end
   end
 
   describe '#my_map' do
-    it 'should return new array with the result of current block for every element' do
-      expect((1..4).my_map { |i| i + i }).to match([2, 4, 6, 8])
+    context 'when block is not given' do
+      it 'enumerable when no block is given' do
+        expect((1..4).my_map).to be_instance_of(Enumerator)
+      end
     end
 
-    it 'enumerable when no block is given' do
-      expect((1..4).my_map).to be_instance_of(Enumerator)
+    context ' when block is given' do
+      it 'should return new array with the result of current block for every element' do
+        expect((1..4).my_map { |i| i + i }).to match([2, 4, 6, 8])
+      end
     end
   end
 
@@ -161,8 +178,9 @@ describe Enumerable do
       it 'should return zero if no argument is given' do
         expect([].my_inject).to eql(0)
       end
-
-      it 'applay the symbol param to the array' do
+    end
+    context 'when argument is given' do
+      it 'apply the symbol param to the array' do
         expect(number.my_inject(2, :-)).to eq(-8)
       end
     end
