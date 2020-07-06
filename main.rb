@@ -1,6 +1,6 @@
 module Enumerable
   def my_each
-    return to_enum if block_given? == false
+    return to_enum(:my_each) if block_given? == false
 
     i = 0
     while i < length
@@ -12,7 +12,7 @@ module Enumerable
   end
 
   def my_each_with_index
-    return to_enum if block_given? == false
+    return to_enum(:my_each_with_index) if block_given? == false
 
     i = 0
     while i < length
@@ -24,33 +24,45 @@ module Enumerable
   end
 
   def my_select
-    return to_enum if block_given? == false
+    return to_enum(:my_select) unless block_given?
 
-    selected_item = []
-    my_each do |i|
-      selected_item.push(i)
+    if is_a?(Array)
+      array = []
+      my_each do |num|
+        array << num if yield(num)
+      end
+      array
+    elsif is_a?(Hash)
+      hash = {}
+      my_each do |key, val|
+        hash[key] = val if yield(key, val)
+      end
+      hash
     end
-    selected_item
   end
 
   def my_all?(args = nil)
-    index = 0
-    array = to_a
-    while index < array.size
-      if block_given? == true
-        return false unless yield(array[index])
-      elsif args.class == Class
-        return false unless array[index].class.ancestors.include? args
-      elsif args.class == Regexp
-        return false unless array[index] =~ args
-      elsif args.nil? == true
-        return false unless array[index]
+    result = true
+    case args
+    when nil
+      if block_given?
+        size.times do |item|
+          result = yield(self[item])
+          return result if result == false
+        end
       else
-        return false unless args[index] == array[index]
+        size.times do |item|
+          result = self[item] != args
+          return result if result == false
+        end
       end
-      index += 1
+    else
+      size.times do |item|
+        result = self[item] == args
+        return result if result == false
+      end
     end
-    true
+    result
   end
 
   def my_any?(args = nil)
@@ -94,22 +106,19 @@ module Enumerable
     true
   end
 
-  def my_count(args = '')
-    array = to_a
-    index = 0
-    count = 0
-    if block_given? == false
-      while index < array.size
-        count += 1 if args != '' && array[index] == args
-        index += 1
-      end
-    else
-      while index < array.size
-        count += 1 if yield(array[index])
-        index += 1
+  def my_count(args = nil)
+    total = 0
+    size.times do |item|
+      case args
+      when nil
+        return size unless block_given?
+
+        total += 1 if yield(self[item])
+      when self[item]
+        total += 1
       end
     end
-    count
+    total
   end
 
   def my_map(&proc)
@@ -155,22 +164,22 @@ module Enumerable
   end
 end
 
-arr = [2, 4, 5]
-arr.my_each { |i| p i }
-arr.my_each_with_index { |val, i| p "#{val} in index #{i}" }
-p(arr.my_select { |i| })
-p(arr.my_all? { |i| i > 3 })
-p(arr.my_any? { |i| i > 10 })
-p(arr.my_none? { |i| i > 9 })
-p(arr.my_count { |i| i > 3 })
-p arr.my_inject(0) { |total, i| total + i }
+# arr = [2, 4, 5]
+# arr.my_each { |i| p i }
+# arr.my_each_with_index { |val, i| p "#{val} in index #{i}" }
+# p(arr.my_select { |i| })
+# p(arr.my_all? { |i| i > 3 })
+# p(arr.my_any? { |i| i > 10 })
+# p(arr.my_none? { |i| i > 9 })
+# p(arr.my_count { |i| i > 3 })
+# p arr.my_inject(0) { |total, i| total + i }
 
-def multiply_els(arr)
-  arr.my_inject(1) { |total, i| total * i }
-end
+# def multiply_els(arr)
+#   arr.my_inject(1) { |total, i| total * i }
+# end
 
-p multiply_els(arr)
+# p multiply_els(arr)
 
-p(arr.my_map { |i| i + 5 })
-my_proc = proc.new { |i| i**3 }
-p arr.my_map(&my_proc)
+# p(arr.my_map { |i| i + 5 })
+# my_proc = proc.new { |i| i**3 }
+# p arr.my_map(&my_proc)
